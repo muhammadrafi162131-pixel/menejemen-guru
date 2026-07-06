@@ -36,7 +36,7 @@
                 </button>
 
                 <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 mb-2">Instrumen Lainnya</p>
-            </nav>
+                </nav>
         </div>
         <div class="p-3 border-t border-slate-800 bg-slate-950/40 text-center text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
             ✓ Akses Gratis Selamanya
@@ -58,7 +58,7 @@
             </button>
         </header>
 
-        <div class="p-6 max-w-6xl w-full mx-auto space-y-6" id="workspace-container">
+        <div class="p-6 max-w-6xl w-full mx-auto" id="workspace-container">
             </div>
 
     </main>
@@ -72,9 +72,9 @@
             "kktp": { title: "Kriteria Ketercapaian TP (KKTP)", desc: "Kriteria ketercapaian setiap tujuan pembelajaran.", color: "from-purple-500 to-indigo-600" },
             "lkpd": { title: "LKPD", desc: "Lembar Kerja Peserta Didik.", color: "from-indigo-400 to-slate-700" },
             "bahan-ajar": { title: "Bahan Ajar", desc: "Materi lengkap untuk peserta didik.", color: "from-amber-400 to-yellow-500" },
-            "kisi-soal": { title: "Kisi-kisi Soal", desc: "Kisi-kisi penyusunan soal ujian.", color: "from-lime-400 to-green-500" },
+            "kisi-soal": { title: "Kisi-kisi Soal", desc: "Kisi-kisi penyusunan soal ujian.", color: "from-lime-400 to-green-500", extraField: "Jumlah Soal", extraField2: "Bentuk Soal" },
             "rubrik": { title: "Rubrik Penilaian", desc: "Rubrik penilaian kinerja/produk.", color: "from-sky-400 to-blue-500" },
-            "hots": { title: "Soal HOTS", desc: "Soal Higher Order Thinking Skills.", color: "from-orange-500 to-red-600" },
+            "hots": { title: "Soal HOTS", desc: "Soal Higher Order Thinking Skills.", color: "from-orange-500 to-red-600", extraField: "Jumlah Soal" },
             "analisis": { title: "Analisis Nilai", desc: "Analisis nilai siswa, remedial, dan pengayaan.", color: "from-pink-500 to-rose-500", isAnalisis: true }
         };
 
@@ -111,184 +111,247 @@
             }
 
             const container = document.getElementById("workspace-container");
-            
+            container.innerHTML = ""; 
+
             if (data.isRPP) {
                 container.innerHTML = `
-                    <div class="space-y-6">
-                        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Nama Guru</label>
-                                    <input type="text" id="rpp-nama" class="w-full text-xs px-3 py-2.5 border rounded-lg bg-slate-50 outline-none focus:ring-1 focus:ring-blue-500" placeholder="Masukkan nama lengkap Anda...">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Nama Guru</label>
+                                        <input type="text" id="rpp-nama" class="w-full text-xs px-3 py-2.5 border rounded-lg bg-slate-50 outline-none focus:ring-1 focus:ring-blue-500" placeholder="Masukkan nama lengkap...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Mata Pelajaran</label>
+                                        <input type="text" id="rpp-mapel" class="w-full text-xs px-3 py-2.5 border rounded-lg bg-slate-50 outline-none focus:ring-1 focus:ring-blue-500" placeholder="cth. IPA, Matematika...">
+                                    </div>
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Mata Pelajaran yang Diajarkan</label>
-                                    <input type="text" id="rpp-mapel" class="w-full text-xs px-3 py-2.5 border rounded-lg bg-slate-50 outline-none focus:ring-1 focus:ring-blue-500" placeholder="cth. Bahasa Indonesia, IPA...">
+                                    <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Instruksi / Prompt Materi RPP</label>
+                                    <textarea id="rpp-prompt" rows="4" class="w-full text-xs p-3 bg-slate-50 border rounded-lg outline-none focus:ring-1 focus:ring-blue-500 resize-none" placeholder="Tulis instruksi materi di sini..."></textarea>
+                                </div>
+                                <div class="flex items-center justify-between border-t pt-4">
+                                    <span class="text-[11px] text-slate-400">Hasil langsung muncul di bawah.</span>
+                                    <button onclick="prosesGenerateRPPLangsung()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                                        <i data-lucide="sparkles" class="w-4 h-4"></i> Generate Sekarang
+                                                </button>
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Tulis Instruksi / Prompt Pembuatan Materi RPP</label>
-                                <textarea id="rpp-prompt" rows="4" class="w-full text-xs p-3 bg-slate-50 border rounded-lg outline-none focus:ring-1 focus:ring-blue-500 resize-none" placeholder="Contoh: Buatkan RPP bab struktur sel tumbuhan..."></textarea>
-                            </div>
-                            <div class="flex items-center justify-between border-t pt-4">
-                                <span class="text-[11px] text-slate-400">Hasil penyusunan akan di-generate instan tepat di bawah box ini.</span>
-                                <button onclick="prosesGenerateRPPLangsung()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
-                                    <i data-lucide="sparkles" class="w-4 h-4"></i> Generate Sekarang
-                                </button>
+
+                            <div id="result-box" class="hidden bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+                                <div class="flex items-center justify-between border-b pb-3">
+                                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="file-text" class="text-emerald-500 w-4 h-4"></i> Hasil Konten</h4>
+                                    <div class="flex gap-2">
+                                        <button onclick="simpanDokumen()" class="text-xs font-bold px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center gap-1"><i data-lucide="save" class="w-3.5 h-3.5"></i> Simpan Ke Lembar Simpanan</button>
+                                    </div>
+                                </div>
+                                <div id="output-text" class="text-xs text-slate-700 leading-relaxed space-y-4 whitespace-pre-line font-mono bg-slate-50 p-4 border rounded-lg max-h-[400px] overflow-y-auto"></div>
                             </div>
                         </div>
 
-                        <div id="rpp-result-box" class="hidden bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
-                            <div class="flex items-center justify-between border-b pb-3">
-                                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i data-lucide="file-text" class="text-emerald-500 w-4 h-4"></i> Hasil Draf RPP Kurikulum Merdeka
-                                </h4>
-                                <div class="flex gap-2">
-                                    <button onclick="salinHasilRPP()" class="text-xs font-medium px-3 py-1.5 border rounded-md bg-slate-50 hover:bg-slate-100 flex items-center gap-1"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin</button>
-                                    <button onclick="simpanKeLembarSimpanan()" class="text-xs font-bold px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center gap-1"><i data-lucide="save" class="w-3.5 h-3.5"></i> Simpan Dokumen</button>
-                                </div>
-                            </div>
-                            <div id="rpp-output-text" class="text-xs text-slate-700 leading-relaxed space-y-4 whitespace-pre-line font-sans bg-slate-50 p-4 border rounded-lg max-h-[400px] overflow-y-auto"></div>
-                        </div>
-
-                        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
-                            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                <i data-lucide="folder-heart" class="text-blue-600 w-4 h-4"></i> Daftar Dokumen Tersimpan (Lembar Simpanan)
+                        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm h-fit">
+                            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2 border-b pb-2">
+                                <i data-lucide="folder" class="text-blue-600 w-4 h-4"></i> Lembar Simpanan (RPP)
                             </h3>
-                            <div class="border rounded-lg overflow-hidden">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 border-b text-slate-600 font-bold">
-                                        <tr>
-                                            <th class="p-3">Tanggal</th>
-                                            <th class="p-3">Nama Guru</th>
-                                            <th class="p-3">Mata Pelajaran</th>
-                                            <th class="p-3">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tabel-simpanan">
-                                        </tbody>
-                                </table>
-                            </div>
+                            <div id="riwayat-list" class="space-y-2 max-h-[450px] overflow-y-auto text-xs">
+                                </div>
                         </div>
                     </div>
                 `;
-                muatTabelSimpanan();
+                muatRiwayat();
+            } else if (data.isAnalisis) {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Judul</label><input type="text" id="f-judul" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="Judul analisis"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Mata Pelajaran</label><input type="text" id="f-mapel" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Matematika"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">KKM</label><input type="number" id="f-kkm" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" value="75"></div>
+                            </div>
+                            <div class="flex items-center gap-2 border-t pt-4">
+                                <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5 border"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload Excel (.xlsx)</button>
+                                <button onclick="simpanDokumenLainnya()" class="ml-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5"><i data-lucide="save" class="w-3.5 h-3.5"></i> Simpan</button>
+                            </div>
+                            <div class="border rounded-lg overflow-hidden bg-white text-xs p-8 text-center text-slate-400 italic">Tabel analisis siap digunakan. Masukkan judul dan mapel lalu klik simpan untuk mengarsipkan.</div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm h-fit">
+                            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2 border-b pb-2"><i data-lucide="folder" class="text-blue-600 w-4 h-4"></i> Lembar Simpanan (${data.title})</h3>
+                            <div id="riwayat-list-lain" class="space-y-2 text-xs"></div>
+                        </div>
+                    </div>
+                `;
+                muatRiwayatLainnya();
             } else {
-                container.innerHTML = `<div class="bg-white p-6 border rounded-xl text-center text-xs text-slate-400 italic">Menu ini siap dikonstruksi. Silakan pilih menu RPP Utama untuk simulasi penuh.</div>`;
+                let dinamisKananAtas = "";
+                if(data.extraField) { dinamisKananAtas += `<div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${data.extraField}</label><input type="text" id="f-extra1" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. 20"></div>`; }
+                if(data.extraField2) { dinamisKananAtas += `<div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${data.extraField2}</label><input type="text" id="f-extra2" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Pilihan Ganda"></div>`; }
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Judul Dokumen</label><input type="text" id="f-judul" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="Masukkan judul..."></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Mata Pelajaran</label><input type="text" id="f-mapel" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Matematika"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Kelas</label><input type="text" id="f-kelas" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. VII"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Fase</label><input type="text" id="f-fase" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. D"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Materi / Topik</label><input type="text" id="f-materi" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Bilangan Bulat"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Alokasi Waktu</label><input type="text" id="f-waktu" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. 2 x 40 menit"></div>
+                                ${dinamisKananAtas}
+                            </div>
+                            <div class="flex items-center justify-between border-t pt-4">
+                                <button onclick="simulasikanIsiKonten()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Auto isi draf</button>
+                                <button onclick="simpanDokumenLainnya()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5"><i data-lucide="save" class="w-3.5 h-3.5"></i> Simpan Dokumen</button>
+                            </div>
+                            <div class="space-y-1 pt-2">
+                                <label class="block text-xs font-bold text-slate-700">Konten Dokumen</label>
+                                <textarea id="f-konten" rows="5" class="w-full text-xs p-3 bg-slate-50 border rounded-lg outline-none font-mono" placeholder="Isi konten dokumen perangkat pembelajaran..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm h-fit">
+                            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2 border-b pb-2">
+                                <i data-lucide="folder" class="text-blue-600 w-4 h-4"></i> Lembar Simpanan (${data.title})
+                            </h3>
+                            <div id="riwayat-list-lain" class="space-y-2 text-xs">
+                                </div>
+                        </div>
+                    </div>
+                `;
+                muatRiwayatLainnya();
             }
             lucide.createIcons();
         }
+
+        // ================= LOGIC GENERATOR & PENYIMPANAN =================
 
         function prosesGenerateRPPLangsung() {
-            const namaGuru = document.getElementById('rpp-nama').value || 'Guru Pengajar';
-            const mapel = document.getElementById('rpp-mapel').value || 'Semua Mata Pelajaran';
-            const instruksi = document.getElementById('rpp-prompt').value || 'Materi Pokok';
+            const nama = document.getElementById('rpp-nama').value || 'Guru Pengajar';
+            const mapel = document.getElementById('rpp-mapel').value || 'Mata Pelajaran';
+            const prompt = document.getElementById('rpp-prompt').value || 'Materi Umum';
 
-            document.getElementById('rpp-result-box').classList.remove('hidden');
-            const outputText = document.getElementById('rpp-output-text');
-            outputText.innerHTML = `<span class="text-blue-500 font-semibold flex items-center gap-2"><i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> AI sedang merancang RPP...</span>`;
-            lucide.createIcons();
+            document.getElementById('result-box').classList.remove('hidden');
+            const output = document.getElementById('output-text');
+            output.innerHTML = `Mempersiapkan susunan RPP...`;
 
             setTimeout(() => {
-                outputText.innerHTML = `
-<b>RENCANA PELAKSANAAN PEMBELAJARAN (RPP) KURIKULUM MERDEKA</b>
-
-<b>I. IDENTITAS PERANGKAT</b>
-• Nama Guru: ${namaGuru}
-• Mata Pelajaran: ${mapel}
-• Fokus Materi: ${instruksi}
-
-<b>II. KEGIATAN PEMBELAJARAN</b>
-• Pendahuluan (10 Menit): Salam, presensi, apersepsi materi.
-• Inti (60 Menit): Pembentukan kelompok diskusi, pengerjaan LKPD, presentasi kelas.
-• Penutup (10 Menit): Refleksi materi bersama, doa bersama.
-
-<b>III. ASESMEN</b>
-• Formatif: Penilaian sikap & keaktifan diskusi kelompok.
-                `;
-            }, 800);
+                output.innerHTML = `<b>RENCANA PELAKSANAAN PEMBELAJARAN (RPP)</b>\n\n<b>Identitas Perangkat:</b>\n• Nama Guru: ${nama}\n• Mata Pelajaran: ${mapel}\n• Materi Pokok: ${prompt}\n\n<b>Kegiatan Inti:</b>\n1. Orientasi masalah materi kontekstual.\n2. Diskusi interaktif antar kelompok.\n3. Penarikan kesimpulan asesmen formatif.`;
+            }, 400);
         }
 
-        // ================= LOGIC LEMBAR SIMPANAN (LOCAL STORAGE) =================
-        function simpanKeLembarSimpanan() {
+        function simulasikanIsiKonten() {
+            const judul = document.getElementById('f-judul').value || 'Draf Perangkat';
+            document.getElementById('f-konten').value = `STRUKTUR DOKUMEN: ${judul}\n\n1. Pendahuluan\n2. Alur Tujuan Pembelajaran Esensial\n3. Pemetaan Indikator Ketercapaian\n4. Instrumen Evaluasi Pembelajaran Teknis.`;
+        }
+
+        // Simpan Khusus RPP Utama
+        function simpanDokumen() {
             const nama = document.getElementById('rpp-nama').value || 'Tanpa Nama';
             const mapel = document.getElementById('rpp-mapel').value || 'Tanpa Mapel';
-            const konten = document.getElementById('rpp-output-text').innerHTML;
-            
-            if(!konten || konten.includes("AI sedang merancang")) {
-                alert("Belum ada materi RPP yang di-generate untuk disimpan!");
-                return;
-            }
+            const isi = document.getElementById('output-text').innerHTML;
 
-            const dokumenBaru = {
-                id: Date.now(),
-                tanggal: new Date().toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-                nama: nama,
-                mapel: mapel,
-                isi: konten
-            };
+            if(!isi || isi.includes("Mempersiapkan")) { alert("Harap generate konten terlebih dahulu!"); return; }
 
-            let listSimpanan = JSON.parse(localStorage.getItem('arsip_rpp')) || [];
-            listSimpanan.push(dokumenBaru);
-            localStorage.setItem('arsip_rpp', JSON.stringify(listSimpanan));
+            const item = { id: Date.now(), tipe: 'rpp', judul: `RPP - ${mapel}`, sub: nama, isi: isi, tanggal: new Date().toLocaleDateString('id-ID') };
+            let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+            list.push(item);
+            localStorage.setItem('arsip_perangkat', JSON.stringify(list));
 
-            alert("✓ Dokumen RPP berhasil disimpan ke dalam Lembar Simpanan!");
-            muatTabelSimpanan();
+            alert("✓ Berhasil disimpan ke Lembar Simpanan!");
+            muatRiwayat();
         }
 
-        function muatTabelSimpanan() {
-            const tbody = document.getElementById('tabel-simpanan');
-            if(!tbody) return;
-            
-            let listSimpanan = JSON.parse(localStorage.getItem('arsip_rpp')) || [];
-            tbody.innerHTML = "";
+        // Simpan Khusus Menu Instrumen Lainnya
+        function simpanDokumenLainnya() {
+            const judul = document.getElementById('f-judul').value || 'Dokumen Tanpa Judul';
+            const mapel = document.getElementById('f-mapel')?.value || 'Umum';
+            const konten = document.getElementById('f-konten')?.value || 'Tidak ada konten teks tambahan.';
 
-            if(listSimpanan.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">Belum ada dokumen yang disimpan.</td></tr>`;
-                return;
-            }
+            const item = { id: Date.now(), tipe: currentActiveMenu, judul: judul, sub: mapel, isi: konten, tanggal: new Date().toLocaleDateString('id-ID') };
+            let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+            list.push(item);
+            localStorage.setItem('arsip_perangkat', JSON.stringify(list));
 
-            listSimpanan.reverse().forEach(doc => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="p-3 text-slate-600">${doc.tanggal}</td>
-                    <td class="p-3 font-semibold text-slate-900">${doc.nama}</td>
-                    <td class="p-3 text-slate-700">${doc.mapel}</td>
-                    <td class="p-3 flex gap-2">
-                        <button onclick="bukaKembaliDokumen(${doc.id})" class="text-blue-600 hover:underline font-semibold flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> Buka</button>
-                        <button onclick="hapusDokumen(${doc.id})" class="text-red-500 hover:underline font-semibold flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+            alert("✓ Dokumen sukses diarsipkan ke Lembar Simpanan menu ini!");
+            muatRiwayatLainnya();
+        }
+
+        function muatRiwayat() {
+            const box = document.getElementById('riwayat-list');
+            if(!box) return;
+            let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+            list = list.filter(i => i.tipe === 'rpp');
+
+            if(list.length === 0) { box.innerHTML = `<p class="text-slate-400 italic">Belum ada arsip simpanan.</p>`; return; }
+            box.innerHTML = "";
+            list.reverse().forEach(doc => {
+                box.innerHTML += `
+                    <div class="p-2.5 bg-slate-50 border rounded-lg hover:border-blue-400 transition space-y-1">
+                        <div class="font-bold text-slate-900 truncate">${doc.judul}</div>
+                        <div class="text-[11px] text-slate-500">${doc.sub} • ${doc.tanggal}</div>
+                        <div class="flex gap-2 pt-1 border-t mt-1">
+                            <button onclick="bukaArsipRpp('${doc.id}')" class="text-blue-600 font-bold hover:underline text-[10px]">Buka</button>
+                            <button onclick="hapusArsip('${doc.id}', 'rpp')" class="text-red-500 font-bold hover:underline text-[10px] ml-auto">Hapus</button>
+                        </div>
+                    </div>`;
             });
             lucide.createIcons();
         }
 
-        function bukaKembaliDokumen(id) {
-            let listSimpanan = JSON.parse(localStorage.getItem('arsip_rpp')) || [];
-            const doc = listSimpanan.find(item => item.id === id);
+        function muatRiwayatLainnya() {
+            const box = document.getElementById('riwayat-list-lain');
+            if(!box) return;
+            let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+            list = list.filter(i => i.tipe === currentActiveMenu);
+
+            if(list.length === 0) { box.innerHTML = `<p class="text-slate-400 italic">Belum ada arsip simpanan.</p>`; return; }
+            box.innerHTML = "";
+            list.reverse().forEach(doc => {
+                box.innerHTML += `
+                    <div class="p-2.5 bg-slate-50 border rounded-lg space-y-1">
+                        <div class="font-bold text-slate-900 truncate">${doc.judul}</div>
+                        <div class="text-[11px] text-slate-500">${doc.sub} • ${doc.tanggal}</div>
+                        <div class="flex gap-2 pt-1 border-t mt-1">
+                            <button onclick="bukaArsipLain('${doc.id}')" class="text-blue-600 font-bold hover:underline text-[10px]">Muat Data</button>
+                            <button onclick="hapusArsip('${doc.id}', 'lain')" class="text-red-500 font-bold hover:underline text-[10px] ml-auto">Hapus</button>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function bukaArsipRpp(id) {
+            let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+            const doc = list.find(i => i.id == id);
             if(doc) {
-                document.getElementById('rpp-nama').value = doc.nama;
-                document.getElementById('rpp-mapel').value = doc.mapel;
-                document.getElementById('rpp-result-box').classList.remove('hidden');
-                document.getElementById('rpp-output-text').innerHTML = doc.isi;
-                window.scrollTo({ top: 300, behavior: 'smooth' });
+                document.getElementById('result-box').classList.remove('hidden');
+                document.getElementById('output-text').innerHTML = doc.isi;
             }
         }
 
-        function hapusDokumen(id) {
-            if(confirm("Apakah Anda yakin ingin menghapus RPP ini dari lembar simpanan?")) {
-                let listSimpanan = JSON.parse(localStorage.getItem('arsip_rpp')) || [];
-                listSimpanan = listSimpanan.filter(item => item.id !== id);
-                localStorage.setItem('arsip_rpp', JSON.stringify(listSimpanan));
-                muatTabelSimpanan();
+        function bukaArsipLain(id) {
+            let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+            const doc = list.find(i => i.id == id);
+            if(doc) {
+                if(document.getElementById('f-judul')) document.getElementById('f-judul').value = doc.judul;
+                if(document.getElementById('f-mapel')) document.getElementById('f-mapel').value = doc.sub;
+                if(document.getElementById('f-konten')) document.getElementById('f-konten').value = doc.isi;
+                alert("Data berhasil dimuat kembali ke formulir!");
             }
         }
 
-        function salinHasilRPP() {
-            const teks = document.getElementById('rpp-output-text').innerText;
-            navigator.clipboard.writeText(teks).then(() => alert("Draf RPP disalin!"));
+        function hapusArsip(id, tipe) {
+            if(confirm("Hapus dokumen ini dari riwayat simpanan?")) {
+                let list = JSON.parse(localStorage.getItem('arsip_perangkat')) || [];
+                list = list.filter(i => i.id != id);
+                localStorage.setItem('arsip_perangkat', JSON.stringify(list));
+                if(tipe === 'rpp') muatRiwayat(); else muatRiwayatLainnya();
+            }
         }
 
         function resetForm() { switchMenu(currentActiveMenu); }
