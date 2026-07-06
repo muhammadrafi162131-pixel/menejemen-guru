@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Perangkat Pembelajaran AI - Gratis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .book-icon {
+            width: 12px; height: 16px; border-radius: 1px 3px 3px 1px;
+            position: relative; display: inline-block; box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+        }
+        .book-icon::after {
+            content: ''; position: absolute; left: 2px; top: 0; width: 1px; height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans flex h-screen overflow-hidden">
+
+    <aside class="w-72 bg-slate-900 text-white flex flex-col justify-between border-r border-slate-800 shrink-0">
+        <div class="overflow-y-auto flex-1">
+            <div class="p-4 border-b border-slate-800 sticky top-0 bg-slate-900 z-10 flex items-center gap-2">
+                <div class="bg-blue-600 p-2 rounded-lg"><i data-lucide="cpu" class="w-4 h-4 text-white"></i></div>
+                <div>
+                    <h1 class="font-bold text-xs tracking-wide">Perangkat Pembelajaran</h1>
+                    <span class="text-[9px] text-blue-400 font-medium tracking-wider uppercase">Kurikulum Merdeka</span>
+                </div>
+            </div>
+            
+            <nav class="p-3 space-y-1" id="sidebar-menu">
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 mb-2">Menu Utama</p>
+                <button id="btn-rpp" onclick="switchMenu('rpp')" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-bold text-left transition-all text-slate-400 hover:bg-slate-800 hover:text-white mb-4 border border-dashed border-slate-700">
+                    <i data-lucide="file-edit" class="w-4 h-4 text-amber-400"></i> Generator RPP Utama
+                </button>
+
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 mb-2">Instrumen Lainnya</p>
+                </nav>
+        </div>
+        <div class="p-3 border-t border-slate-800 bg-slate-950/40 text-center text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+            ✓ Akses Gratis Selamanya
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-y-auto bg-[#f8fafc]">
+        
+        <header class="bg-white border-b border-slate-200 h-14 flex items-center justify-between px-6 sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <div id="header-icon" class="p-2 rounded-lg bg-slate-100"></div>
+                <div>
+                    <h2 id="header-title" class="text-sm font-bold text-slate-900">Nama Menu</h2>
+                    <p id="header-desc" class="text-[11px] text-slate-500">Deskripsi perangkat pembelajaran.</p>
+                </div>
+            </div>
+            <button onclick="resetForm()" class="text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 transition flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Baru
+            </button>
+        </header>
+
+        <div class="p-6 max-w-6xl w-full mx-auto" id="workspace-container">
+            </div>
+
+    </main>
+
+    <script>
+        // Data Struktur Menu Aplikasi
+        const menuData = {
+            "rpp": { title: "Generator RPP Utama", desc: "Buat RPP instan dengan identitas guru dan instruksi langsung di bawah prompt.", isRPP: true },
+            "modul-ajar": { title: "Modul Ajar", desc: "Rencana pembelajaran lengkap Kurikulum Merdeka.", color: "from-green-400 to-emerald-500" },
+            "atp": { title: "Alur Tujuan Pembelajaran (ATP)", desc: "Alur pencapaian tujuan pembelajaran per fase.", color: "from-orange-400 to-red-500" },
+            "tp": { title: "Tujuan Pembelajaran (TP)", desc: "Rumusan tujuan pembelajaran turunan Capaian Pembelajaran.", color: "from-pink-500 to-rose-600" },
+            "kktp": { title: "Kriteria Ketercapaian TP (KKTP)", desc: "Kriteria ketercapaian setiap tujuan pembelajaran.", color: "from-purple-500 to-indigo-600" },
+            "lkpd": { title: "LKPD", desc: "Lembar Kerja Peserta Didik.", color: "from-indigo-400 to-slate-700" },
+            "bahan-ajar": { title: "Bahan Ajar", desc: "Materi lengkap untuk peserta didik.", color: "from-amber-400 to-yellow-500" },
+            "kisi-soal": { title: "Kisi-kisi Soal", desc: "Kisi-kisi penyusunan soal ujian.", color: "from-lime-400 to-green-500", extraField: "Jumlah Soal", extraField2: "Bentuk Soal" },
+            "rubrik": { title: "Rubrik Penilaian", desc: "Rubrik penilaian kinerja/produk.", color: "from-sky-400 to-blue-500" },
+            "hots": { title: "Soal HOTS", desc: "Soal Higher Order Thinking Skills.", color: "from-orange-500 to-red-600", extraField: "Jumlah Soal" },
+            "analisis": { title: "Analisis Nilai", desc: "Analisis nilai siswa, remedial, dan pengayaan.", color: "from-pink-500 to-rose-500", isAnalisis: true }
+        };
+
+        let currentActiveMenu = "rpp";
+
+        // Render Navigasi Sidebar
+        function renderSidebar() {
+            const nav = document.getElementById("sidebar-menu");
+            Object.keys(menuData).forEach(key => {
+                if (key === "rpp") return;
+                const item = menuData[key];
+                const btn = document.createElement("button");
+                btn.id = `btn-${key}`;
+                btn.onclick = () => switchMenu(key);
+                btn.className = "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-left transition-all text-slate-400 hover:bg-slate-800 hover:text-white mb-0.5";
+                btn.innerHTML = `<span class="book-icon bg-gradient-to-br ${item.color}"></span> ${item.title}`;
+                nav.appendChild(btn);
+            });
+        }
+
+        // Fungsi Ganti Menu Halaman Utama
+        function switchMenu(key) {
+            currentActiveMenu = key;
+            const data = menuData[key];
+
+            document.querySelectorAll("#sidebar-menu button").forEach(b => b.classList.remove("bg-blue-600", "text-white", "hover:bg-blue-600"));
+            const activeBtn = document.getElementById(`btn-${key}`);
+            activeBtn.classList.add("bg-blue-600", "text-white");
+
+            document.getElementById("header-title").textContent = data.title;
+            document.getElementById("header-desc").textContent = data.desc;
+            if (data.isRPP) {
+                document.getElementById("header-icon").innerHTML = `<i data-lucide="file-edit" class="w-4 h-4 text-amber-500"></i>`;
+            } else {
+                document.getElementById("header-icon").innerHTML = `<span class="book-icon bg-gradient-to-br ${data.color} !w-4 !h-5"></span>`;
+            }
+
+            const container = document.getElementById("workspace-container");
+            container.innerHTML = ""; 
+
+            if (data.isRPP) {
+                // TAMPILAN RPP YANG KINI INSTAN LANGSUNG DI BAWAH PROMPT
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Nama Guru</label>
+                                    <input type="text" id="rpp-nama" class="w-full text-xs px-3 py-2.5 border rounded-lg bg-slate-50 outline-none focus:ring-1 focus:ring-blue-500" placeholder="Masukkan nama lengkap Anda...">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Mata Pelajaran yang Diajarkan</label>
+                                    <input type="text" id="rpp-mapel" class="w-full text-xs px-3 py-2.5 border rounded-lg bg-slate-50 outline-none focus:ring-1 focus:ring-blue-500" placeholder="cth. Bahasa Indonesia, IPA, Sejarah...">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1">Tulis Instruksi / Prompt Pembuatan Materi RPP</label>
+                                <textarea id="rpp-prompt" rows="4" class="w-full text-xs p-3 bg-slate-50 border rounded-lg outline-none focus:ring-1 focus:ring-blue-500 resize-none" placeholder="Contoh: Buatkan RPP bab struktur sel tumbuhan dengan model pembelajaran Problem Based Learning (PBL) untuk 1 pertemuan..."></textarea>
+                            </div>
+                            <div class="flex items-center justify-between border-t pt-4">
+                                <span class="text-[11px] text-slate-400">Hasil penyusunan akan di-generate instan tepat di bawah box ini.</span>
+                                <button onclick="prosesGenerateRPPLangsung()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i> Generate Sekarang
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="rpp-result-box" class="hidden bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4 transition-all duration-300">
+                            <div class="flex items-center justify-between border-b pb-3">
+                                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="file-text" class="text-emerald-500 w-4 h-4"></i> Hasil Draf RPP Kurikulum Merdeka
+                                </h4>
+                                <div class="flex gap-2">
+                                    <button onclick="salinHasilRPP()" class="text-xs font-medium px-3 py-1.5 border rounded-md bg-slate-50 hover:bg-slate-100 flex items-center gap-1"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin</button>
+                                    <button onclick="window.print()" class="text-xs font-medium px-3 py-1.5 border rounded-md bg-slate-50 hover:bg-slate-100 flex items-center gap-1"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak</button>
+                                </div>
+                            </div>
+                            <div id="rpp-output-text" class="text-xs text-slate-700 leading-relaxed space-y-4 whitespace-pre-line font-sans bg-slate-50 p-4 border rounded-lg max-h-[500px] overflow-y-auto">
+                                </div>
+                        </div>
+                    </div>
+                `;
+            } else if (data.isAnalisis) {
+                // Tampilan Analisis Nilai (Sesuai Struktur Sebelumnya)
+                container.innerHTML = `
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Judul</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="Judul analisis"></div>
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Mata Pelajaran</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Matematika"></div>
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Kelas</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. VII"></div>
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">KKM</label><input type="number" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" value="75"></div>
+                        </div>
+                        <div class="flex items-center gap-2 border-t pt-4">
+                            <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1.5 border"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload Excel (.xlsx)</button>
+                            <button class="ml-auto bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition border"><i data-lucide="save" class="w-3.5 h-3.5"></i> Simpan</button>
+                        </div>
+                        <div class="border rounded-lg overflow-hidden bg-white">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 border-b text-slate-600 font-bold">
+                                    <tr><th class="p-3 w-12">#</th><th class="p-3">Nama</th><th class="p-3">NIS</th><th class="p-3">Nilai</th><th class="p-3">Status</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="5" class="p-8 text-center text-slate-400 italic">Belum ada data. Upload Excel atau tambah baris.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Tampilan Standar Menu Lainnya (Modul Ajar dll)
+                let dinamisKananAtas = "";
+                if(data.extraField) { dinamisKananAtas += `<div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${data.extraField}</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. 20"></div>`; }
+                if(data.extraField2) { dinamisKananAtas += `<div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${data.extraField2}</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Pilihan Ganda"></div>`; }
+                if(!data.extraField2 && data.extraField) { dinamisKananAtas = `<div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${data.extraField}</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. 20"></div><div></div>`; }
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Judul</label><input type="text" id="f-judul" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="Judul dokumen"></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Mata Pelajaran</label><input type="text" id="f-mapel" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Matematika"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Kelas</label><input type="text" id="f-kelas" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. VII"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Fase</label><input type="text" id="f-fase" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. D"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Materi / Topik</label><input type="text" id="f-materi" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. Bilangan Bulat"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Alokasi Waktu</label><input type="text" class="w-full text-xs px-3 py-2 border rounded-lg bg-slate-50" placeholder="cth. 2 x 40 menit"></div>
+                                ${dinamisKananAtas}
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 pt-2 border-t">
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition border">Simpan</button>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col min-h-[350px]">
+                            <h3 class="text-xs font-bold text-slate-700 mb-2 border-b pb-2 flex items-center gap-1.5"><i data-lucide="eye" class="w-4 h-4"></i> Pratinjau</h3>
+                            <div class="flex-1 text-xs text-slate-400 italic p-2">Data pratinjau siap muncul.</div>
+                        </div>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        // FUNGSI GENERATE INSTAN LANGSUNG MUNCUL DI BAWAH PROMPT RPP
+        function prosesGenerateRPPLangsung() {
+            const namaGuru = document.getElementById('rpp-nama').value || 'Guru Pengajar';
+            const mapel = document.getElementById('rpp-mapel').value || 'Semua Mata Pelajaran';
+            const instruksi = document.getElementById('rpp-prompt').value || 'Materi Pokok Semester';
+
+            // Menampilkan kotak wadah hasil RPP
+            const resultBox = document.getElementById('rpp-result-box');
+            const outputText = document.getElementById('rpp-output-text');
+            resultBox.classList.remove('hidden');
+
+            // Set text animasi loading sederhana
+            outputText.innerHTML = `<span class="text-blue-500 font-semibold flex items-center gap-2"><i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> AI sedang merancang draf struktur RPP terbaik...</span>`;
+            lucide.createIcons();
+
+            // Mensimulasikan loading pengerjaan AI selama 1 detik agar realistis
+            setTimeout(() => {
+                outputText.innerHTML = `
+<b>RENCANA PELAKSANAAN PEMBELAJARAN (RPP) KURIKULUM MERDEKA</b>
+
+<b>I. IDENTITAS PERANGKAT</b>
+• Nama Guru: ${namaGuru}
+• Mata Pelajaran: ${mapel}
+• Fokus Materi: ${instruksi}
+• Alokasi Waktu: 2 JP (2 x 40 Menit)
+
+<b>II. CAPAIAN & TUJUAN PEMBELAJARAN</b>
+1. Peserta didik mampu menganalisis elemen konsep dasar materi esensial secara kritis dan kolaboratif.
+2. Melalui metode berbasis inkuiri, siswa dapat merumuskan kesimpulan aplikatif sesuai topik pembahasan.
+
+<b>III. KEGIATAN PEMBELAJARAN (SINTAKS PBL/INQUIRY)</b>
+• <b>Kegiatan Pendahuluan (10 Menit):</b> Guru membuka kelas dengan salam, memeriksa kehadiran, memberikan apersepsi kontekstual, serta melemparkan pertanyaan pemantik terkait tema hari ini.
+• <b>Kegiatan Inti (60 Menit):</b> 
+  - Siswa dibagi menjadi kelompok kecil beranggotakan 4-5 orang.
+  - Setiap kelompok diberikan lembar eksplorasi masalah kontekstual.
+  - Guru membimbing penyelidikan mandiri dan diskusi kelompok aktif.
+  - Setiap kelompok mempresentasikan hasil analisis di depan kelas secara bergantian.
+• <b>Kegiatan Penutup (10 Menit):</b> Guru dan siswa bersama-sama melakukan refleksi akhir, menyimpulkan poin materi penting, dan menutup dengan doa bersama.
+
+<b>IV. INSTRUMEN ASESMEN / PENILAIAN</b>
+• Asesmen Formatif: Observasi keaktifan diskusi kelompok siswa sepanjang kegiatan inti berjalan.
+• Asesmen Sumatif: Pemberian tes tertulis ringkas berupa soal pemahaman penalaran di akhir materi.
+                `;
+            }, 1000);
+        }
+
+        // Fungsi Salin Hasil RPP
+        function salinHasilRPP() {
+            const teks = document.getElementById('rpp-output-text').innerText;
+            navigator.clipboard.writeText(teks).then(() => {
+                alert("Draf susunan RPP berhasil disalin ke clipboard!");
+            });
+        }
+
+        function resetForm() {
+            switchMenu(currentActiveMenu);
+        }
+
+        window.onload = () => {
+            renderSidebar();
+            switchMenu("rpp");
+        };
+    </script>
+</body>
+</html>
